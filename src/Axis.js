@@ -1,21 +1,21 @@
-import React from 'react'
-import { G, Line, Text } from 'react-native-svg'
-import moment from 'moment'
+import React from "react";
+import { G, Line, Text } from "react-native-svg";
+import moment from "moment";
 
 const Axis = props => {
-  const { x, y, width, height, scale, ticks, textColor } = props
-  const endX = x + width
-  const endY = y
+  const { x, y, width, height, scale, ticks, textColor } = props;
+  const endX = x + width;
+  const endY = y;
 
   // Calculate tick points
-  let tickPoints = []
-  let TICK_SIZE = width / 35
-  let TICKS_EVERY = Math.floor(width / (ticks - 1))
+  let tickPoints = [];
+  let TICK_SIZE = width / 35;
+  let TICKS_EVERY = Math.floor(width / (ticks - 1));
 
-  let iterator = x
+  let iterator = x;
   while (iterator <= endX) {
-    tickPoints.push(iterator)
-    iterator += TICKS_EVERY
+    tickPoints.push(iterator);
+    iterator += TICKS_EVERY;
   }
 
   return (
@@ -52,10 +52,10 @@ const Axis = props => {
       ])}
 
       {tickPoints.map((pos, index) => {
-        let textAnchor = 'middle'
+        let textAnchor = "middle";
 
-        if (index == 0) textAnchor = 'start'
-        if (index === tickPoints.length - 1) textAnchor = 'end'
+        if (index == 0) textAnchor = "start";
+        if (index === tickPoints.length - 1) textAnchor = "end";
 
         return (
           <Text
@@ -67,12 +67,12 @@ const Axis = props => {
             x={pos}
             y={y - 2 * TICK_SIZE}
           >
-            {moment(scale.invert(pos)).format('D MMM')}
+            {moment(scale.invert(pos)).format("D MMM")}
           </Text>
-        )
+        );
       })}
     </G>
-  )
-}
+  );
+};
 
-export default Axis
+export default Axis;

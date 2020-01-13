@@ -1,37 +1,41 @@
-import React, { PureComponent } from 'react'
-import { Dimensions, View, PanResponder } from 'react-native'
-import Svg, { G } from 'react-native-svg'
-import * as d3 from 'd3'
-import PropTypes from 'prop-types'
-import Axis from './Axis'
-import Bar from './Bar'
+import React, { Component } from "react";
+import { Dimensions, View, PanResponder } from "react-native";
+import Svg, { G } from "react-native-svg";
+import * as d3 from "d3";
+import PropTypes from "prop-types";
+import Axis from "./Axis";
+import Bar from "./Bar";
 
-class GanttChart extends PureComponent {
-  window = Dimensions.get('window')
-  barHeight = 44
+class GanttChart extends Component {
+  window = Dimensions.get("window");
+  barHeight = 44;
 
-  state = {
-    height: this.window.height,
-    width: this.window.width
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      height: this.window.height,
+      width: this.window.width * 10
+    };
   }
 
-  _isMoving = false
-  _top = 0
-  _initialY = 0
-  _initialTop = 0
-  chartRef = null
+  _isMoving = false;
+  _top = 0;
+  _initialY = 0;
+  _initialTop = 0;
+  chartRef = null;
 
   processTouch(y) {
     if (!this._isMoving) {
-      this._isMoving = true
-      this._initialTop = this._top
-      this._initialY = y
+      this._isMoving = true;
+      this._initialTop = this._top;
+      this._initialY = y;
     } else {
-      const dy = y - this._initialY
-      this._top = Math.min(this._initialTop + dy, 0)
+      const dy = y - this._initialY;
+      this._top = Math.min(this._initialTop + dy, 0);
 
       // react-native-svg - setNativeProps({ matrix: [scaleX, skewY, skewX, scaleY, translateX, translateY] })
-      this.chartRef.setNativeProps({ matrix: [1, 0, 0, 1, 0, this._top] })
+      this.chartRef.setNativeProps({ matrix: [1, 0, 0, 1, 0, this._top] });
     }
   }
 
@@ -39,15 +43,15 @@ class GanttChart extends PureComponent {
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: event => {
-        const { touches } = event.nativeEvent
+        const { touches } = event.nativeEvent;
 
         if (touches.length === 1) {
-          const [{ locationY }] = touches
-          this.processTouch(locationY)
+          const [{ locationY }] = touches;
+          this.processTouch(locationY);
         }
       },
       onPanResponderRelease: () => (this._isMoving = false)
-    })
+    });
   }
 
   _onLayout(event) {
@@ -55,47 +59,47 @@ class GanttChart extends PureComponent {
       nativeEvent: {
         layout: { height, width }
       }
-    } = event
+    } = event;
 
-    this.setState({ height, width })
+    this.setState({ height, width });
   }
 
   // Calculate min/max dateTimes for TimeGrid
   calcExtent = () => {
-    const { data, gridMin, gridMax } = this.props
+    const { data, gridMin, gridMax } = this.props;
 
     dateTimes = data.reduce((acc, cur) => {
-      acc.push(cur.start.getTime(), cur.end.getTime())
-      return acc
-    }, [])
+      acc.push(cur.start.getTime(), cur.end.getTime());
+      return acc;
+    }, []);
 
-    return d3.extent([...dateTimes, gridMin, gridMax])
-  }
+    return d3.extent([...dateTimes, gridMin, gridMax]);
+  };
 
   calcXScale = domain => {
     return d3
       .scaleTime()
       .domain(domain)
-      .range([0, this.state.width])
-  }
+      .range([0, this.state.width]);
+  };
 
   render() {
-    const { data, numberOfTicks, onPressTask, colors } = this.props
+    const { data, numberOfTicks, onPressTask, colors } = this.props;
     const {
       barColorPrimary,
       barColorSecondary,
       backgroundColor,
       textColor
-    } = colors
+    } = colors;
 
-    const { height, width } = this.state
-    const timeAxisHeight = height / 10
+    const { height, width } = this.state;
+    const timeAxisHeight = height / 10;
 
     // TODO: Change with no data view
-    if (!data || data.length === 0) return null
+    if (!data || data.length === 0) return null;
 
-    const extent = this.calcExtent()
-    const xScale = this.calcXScale(extent)
+    const extent = this.calcExtent();
+    const xScale = this.calcXScale(extent);
 
     return (
       <View
@@ -121,8 +125,8 @@ class GanttChart extends PureComponent {
           height={height - timeAxisHeight}
           width={width}
           style={{
-            backgroundColor: 'transparent',
-            position: 'absolute',
+            backgroundColor: "transparent",
+            position: "absolute",
             top: timeAxisHeight + 1.5,
             left: 0
           }}
@@ -143,12 +147,12 @@ class GanttChart extends PureComponent {
                   secondaryColor={barColorSecondary}
                   textColor={textColor}
                 />
-              )
+              );
             })}
           </G>
         </Svg>
       </View>
-    )
+    );
   }
 }
 
@@ -172,17 +176,17 @@ GanttChart.propTypes = {
     textColor: PropTypes.string,
     backgroundColor: PropTypes.string
   })
-}
+};
 
 GanttChart.defaultProps = {
   numberOfTicks: 4,
   colors: {
-    barColorPrimary: '#0c2461',
-    barColorSecondary: '#4a69bd',
-    textColor: '#fff',
-    backgroundColor: '#82ccdd'
+    barColorPrimary: "#0c2461",
+    barColorSecondary: "#4a69bd",
+    textColor: "#fff",
+    backgroundColor: "#82ccdd"
   },
   onPressTask: () => {}
-}
+};
 
-export default GanttChart
+export default GanttChart;

@@ -1,5 +1,5 @@
-import React from 'react'
-import { Rect, Text, G } from 'react-native-svg'
+import React from "react";
+import { Rect, Text, G } from "react-native-svg";
 
 const Bar = props => {
   const {
@@ -13,14 +13,14 @@ const Bar = props => {
     primaryColor,
     secondaryColor,
     textColor
-  } = props
+  } = props;
 
-  const padding = 4
+  const padding = 4;
 
-  const x = scale(startVal)
-  const y = barHeight * index + padding * (index + 1)
-  const taskDuration = scale(endVal) - scale(startVal)
-  const taskProgress = task.progress ? task.progress : 0
+  const x = scale(startVal);
+  const y = barHeight * index + padding * (index + 1);
+  const taskDuration = scale(endVal) - scale(startVal);
+  const taskProgress = task.progress ? task.progress : 0;
 
   return (
     <G onPressIn={() => onPress(task)}>
@@ -53,7 +53,7 @@ const Bar = props => {
         {task.name}
       </Text>
     </G>
-  )
-}
+  );
+};
 
-export default Bar
+export default Bar;
